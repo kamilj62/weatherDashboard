@@ -1,4 +1,3 @@
-// variables for various HTML elements
 var cityButtonEl = document.getElementById("cityButton");
 var cityNameEl = document.getElementById("cityName");
 var apiKey = '5c7bbb9b2135cd2940045fc0c9f3f01f';
@@ -6,22 +5,21 @@ var currentDateEl = document.getElementById('currentDate');
 var locationEl = document.getElementById("location");
 var currentTempEl = document.getElementById('currentTemp');
 var currentWeatherEl = document.getElementById('currentWeather');
-var currentIconEl = document.getElementById('currentIcon')
+var currentIconEl = document.getElementById('currentIcon');
 var currentWindEl = document.getElementById('currentWind');
 var currentHumidityEl = document.getElementById('currentHumidity');
 var hiddenEl = document.querySelector('.hidden');
 
-// uses the browser's geolocation API to get the user's current location coordinates.
+var searchedHistory = [];
+
 var getLocation = function() {
     if (navigator.geolocation) {
-      console.log(navigator.geolocation);
       navigator.geolocation.getCurrentPosition(passLocations);
     } else {
       alert('Not able to find your location')
     }
   }
 
-// makes a fetch request to the OpenWeatherMap API to retrieve the weather forecast for a given latitude and longitude.
 var forcast = function (lat, long) {
   var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=5c7bbb9b2135cd2940045fc0c9f3f01f&units=imperial';
     fetch(apiUrl)
@@ -30,7 +28,7 @@ var forcast = function (lat, long) {
           response.json().then(function (data) {
             currentWeather(data.city.coord.lat, data.city.coord.lon);
             displayFive(data);
-            console.log('data', data);
+            console.log('displayFive', data);
           });
         } else {
           alert('Error: ' + response.statusText);
@@ -39,22 +37,34 @@ var forcast = function (lat, long) {
       .catch(function (error) {
         alert('Unable to connect to forecast');
       });
-
   };
 
-// takes weather data as input and updates the HTML elements
+  var isSearchPerformed = false;
+
 function displayLocation(data) {
-  // add icon
+
   currentDateEl.textContent = "Today's Date: " + new Date().toLocaleDateString();
-  locationEl.textContent = "Current location: " + data.name, 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
+  locationEl.textContent = "Current location: " + data.name
+  
+  if (currentIconEl.children.length === 0) {
+    var weatherIcon = document.createElement('img');
+    weatherIcon.src = 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
+    currentIconEl.appendChild(weatherIcon);
+  }
+
   currentTempEl.textContent = "Current Temperature: " + data.main.temp + '°F';
   currentWeatherEl.textContent = "Current Weather: " + data.weather[0].main;
   currentWindEl.textContent = "Current Wind: " + data.wind.speed + ' m/s';
-  currentHumidityEl.textContent = "Current Humidity: " + data.main.humidity + '%';                            
+  currentHumidityEl.textContent = "Current Humidity: " + data.main.humidity + '%';      
   
+  if (!isSearchPerformed) {
+    searchedHistory.push(data.name);
+    localStorage.setItem('searchHistory', JSON.stringify(searchedHistory));
+    console.log(searchedHistory);
+    isSearchPerformed = true;
+  }
 }
 
-// takes weather forecast data as input and dynamically creates HTML elements to display the forecast for the next five days.
 function displayFive(info) {
   const container = document.getElementById('container');
 
@@ -94,17 +104,13 @@ function displayFive(info) {
   }
 }
 
-// when the user's location is successfully retrieved. It calls the forcast, currentWeather, displayLocation, and displayFive functions to update the webpage with the weather information
 function passLocations(position) {
   var lat = position.coords.latitude;
   var long = position.coords.longitude; 
   forcast(lat, long);  
   currentWeather(lat, long);
-  displayLocation(lat, long);
-  displayFive(lat, long);
 } 
 
-// fetch request to the OpenWeatherMap API to retrieve the current weather for a given latitude and longitude
 var currentWeather = function (lat, long) {
     var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=imperial`;
   
@@ -113,7 +119,7 @@ var currentWeather = function (lat, long) {
         if (response.ok) {
           response.json().then(function (data) {
             displayLocation(data);
-            
+            console.log('displayLocation', data);
           });
         } else {
           alert('Error: ' + response.statusText);
@@ -122,10 +128,8 @@ var currentWeather = function (lat, long) {
       .catch(function (error) {
         alert('Unable to connect to city');
       });
-
   };
 
-// that takes a city name as input and makes a fetch request to the OpenWeatherMap API to retrieve the latitude and longitude coordinates for that city
 var getLocation = function(city) {
   var geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${apiKey}`
   fetch(geoUrl)
@@ -137,10 +141,10 @@ var getLocation = function(city) {
     })
 }
 
-
 cityButtonEl.addEventListener('click', function(event) {
   event.preventDefault();
   var name = cityNameEl.value;
   hiddenEl.classList.remove('hidden');
   getLocation(name);
+  searchedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
 })
