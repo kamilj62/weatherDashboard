@@ -81,7 +81,7 @@ function displayFive(info) {
     element.appendChild(date);
 
     const temperature = document.createElement('p');
-    temperature.textContent = 'Temperature: ' + info.list[i].main.temp;
+    temperature.textContent = 'Temperature: ' + info.list[i].main.temp + '°F';
     element.appendChild(temperature);
 
     const weather = document.createElement('p');
@@ -93,11 +93,11 @@ function displayFive(info) {
     element.appendChild(weatherIcon);
 
     const windSpeed = document.createElement('p');
-    windSpeed.textContent = 'Wind Speed: ' + info.list[i].wind.speed;
+    windSpeed.textContent = 'Wind Speed: ' + info.list[i].wind.speed + 'm/s';
     element.appendChild(windSpeed);
 
     const humidity = document.createElement('p');
-    humidity.textContent = 'Humidity: ' + info.list[i].main.humidity;
+    humidity.textContent = 'Humidity: ' + info.list[i].main.humidity + '%';
     element.appendChild(humidity);
     
     container.appendChild(element);
