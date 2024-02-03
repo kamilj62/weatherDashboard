@@ -12,9 +12,11 @@
     <title>Weather Dashboard</title>
   </head>
   <body>
+
+    <h1 class="text-center">Weather Dashboard</h1>
     <main class="d-flex flex-nowrap">
-      <h1 class="order-1 p-2">Weather Dashboard</h1>
-      <form class="order-2 p-2">
+      
+      <form class="text-center p-2">
         <div class="mb-3">
           <label for="cityName" class="form-label">City Name</label>
           <input
@@ -28,9 +30,13 @@
         <button type="submit" class="btn btn-primary" id="cityButton">
           Submit
         </button>
+
+        <section class="align-content-start p-2">
+          <div id="cityButtonContainer"></div>
+        </section>
       </form>
 
-      <section class="order-3 p-2">
+      <section class="end-text p-2">
         <h1 id="location"></h1>
         <h3 id="currentIcon"></h3>
         <h3 id="currentDate"></h3>
@@ -39,6 +45,7 @@
         <h3 id="currentWind"></h3>
         <h3 id="currentHumidity"></h3>
       </section>
+
     </main>
     <section class="container">
       <div class="row">

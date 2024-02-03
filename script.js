@@ -141,10 +141,34 @@ var getLocation = function(city) {
     })
 }
 
+var getLocalStorage = function() {
+  searchedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  var cityButtonContainer = document.getElementById('cityButtonContainer');
+  
+  for (let i = 0; i < searchedHistory.length; i++) {
+    var cityButton = document.createElement('button')
+    cityButton.textContent = searchedHistory[i];
+    var city = "";
+    city = searchedHistory[i]; // Assign the city value to the button's text content
+    
+    cityButton.classList.add('btn', 'bg-secondary-subtle', 'text-dark', 'mb-3', 'w-100');
+    cityButtonContainer.appendChild(cityButton);
+    
+    // Add event listener to the button
+    cityButton.addEventListener('click', function(event) {
+      // Navigate to the city when the button is clicked
+      event.preventDefault();
+      city = cityButton.textContent;
+      console.log('city', city);
+      getLocation(city); 
+    });
+  }
+}
+
 cityButtonEl.addEventListener('click', function(event) {
   event.preventDefault();
   var name = cityNameEl.value;
   hiddenEl.classList.remove('hidden');
   getLocation(name);
-  searchedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  getLocalStorage();
 })
