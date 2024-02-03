@@ -39,8 +39,6 @@ var forcast = function (lat, long) {
       });
   };
 
-  var isSearchPerformed = false;
-
 function displayLocation(data) {
 
   currentDateEl.textContent = "Today's Date: " + new Date().toLocaleDateString();
@@ -57,11 +55,10 @@ function displayLocation(data) {
   currentWindEl.textContent = "Current Wind: " + data.wind.speed + ' m/s';
   currentHumidityEl.textContent = "Current Humidity: " + data.main.humidity + '%';      
   
-  if (!isSearchPerformed) {
+  if (!searchedHistory.includes(data.name)) {
     searchedHistory.push(data.name);
     localStorage.setItem('searchHistory', JSON.stringify(searchedHistory));
-    console.log(searchedHistory);
-    isSearchPerformed = true;
+    console.log('searchHistory', searchedHistory);
   }
 }
 
@@ -141,34 +138,28 @@ var getLocation = function(city) {
     })
 }
 
-var getLocalStorage = function() {
-  searchedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-  var cityButtonContainer = document.getElementById('cityButtonContainer');
-  
-  for (let i = 0; i < searchedHistory.length; i++) {
-    var cityButton = document.createElement('button')
-    cityButton.textContent = searchedHistory[i];
-    var city = "";
-    city = searchedHistory[i]; // Assign the city value to the button's text content
-    
-    cityButton.classList.add('btn', 'bg-secondary-subtle', 'text-dark', 'mb-3', 'w-100');
-    cityButtonContainer.appendChild(cityButton);
-    
-    // Add event listener to the button
-    cityButton.addEventListener('click', function(event) {
-      // Navigate to the city when the button is clicked
-      event.preventDefault();
-      city = cityButton.textContent;
-      console.log('city', city);
-      getLocation(city); 
-    });
-  }
-}
-
 cityButtonEl.addEventListener('click', function(event) {
   event.preventDefault();
   var name = cityNameEl.value;
   hiddenEl.classList.remove('hidden');
   getLocation(name);
-  getLocalStorage();
-})
+  cityNameEl.value = ''; // Clear the input field after submitting
+
+  // Add the city name to the searchedHistory array in localStorage
+  searchedHistory.push(name);
+  localStorage.setItem('searchHistory', JSON.stringify(searchedHistory));
+
+  // Create a new city button and add it to the city buttons container
+  var cityButtonContainer = document.getElementById('cityButtonContainer');
+  var cityButton = document.createElement('button');
+  cityButton.textContent = name;
+  cityButton.classList.add('btn', 'bg-secondary-subtle', 'text-dark', 'mb-3', 'w-100');
+  cityButtonContainer.appendChild(cityButton);
+
+  // Add event listener to the new city button
+  cityButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    var clickedCity = this.textContent;
+    getLocation(clickedCity);
+  });
+});
