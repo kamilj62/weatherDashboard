@@ -21,7 +21,7 @@ var getLocation = function() {
   }
 
 var forcast = function (lat, long) {
-  var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=5c7bbb9b2135cd2940045fc0c9f3f01f&units=imperial';
+  var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=' + apiKey + '&units=imperial';
     fetch(apiUrl)
       .then(function (response) {
         if (response.ok) {
