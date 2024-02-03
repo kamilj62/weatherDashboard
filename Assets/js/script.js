@@ -1,3 +1,4 @@
+// variables for various HTML elements
 var cityButtonEl = document.getElementById("cityButton");
 var cityNameEl = document.getElementById("cityName");
 var apiKey = '5c7bbb9b2135cd2940045fc0c9f3f01f';
@@ -8,8 +9,9 @@ var currentWeatherEl = document.getElementById('currentWeather');
 var currentIconEl = document.getElementById('currentIcon')
 var currentWindEl = document.getElementById('currentWind');
 var currentHumidityEl = document.getElementById('currentHumidity');
-var hiddenEl = document.getElementsByClassName('hidden');
+var hiddenEl = document.querySelector('.hidden');
 
+// uses the browser's geolocation API to get the user's current location coordinates.
 var getLocation = function() {
     if (navigator.geolocation) {
       console.log(navigator.geolocation);
@@ -19,6 +21,7 @@ var getLocation = function() {
     }
   }
 
+// makes a fetch request to the OpenWeatherMap API to retrieve the weather forecast for a given latitude and longitude.
 var forcast = function (lat, long) {
   var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=5c7bbb9b2135cd2940045fc0c9f3f01f&units=imperial';
     fetch(apiUrl)
@@ -39,21 +42,29 @@ var forcast = function (lat, long) {
 
   };
 
+// takes weather data as input and updates the HTML elements
 function displayLocation(data) {
-  locationEl.textContent = "Current location: " + data.name;
+  // add icon
+  currentDateEl.textContent = "Today's Date: " + new Date().toLocaleDateString();
+  locationEl.textContent = "Current location: " + data.name, 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
   currentTempEl.textContent = "Current Temperature: " + data.main.temp + '°F';
-  currentIconEl.setAttribute('src', 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png');
   currentWeatherEl.textContent = "Current Weather: " + data.weather[0].main;
   currentWindEl.textContent = "Current Wind: " + data.wind.speed + ' m/s';
   currentHumidityEl.textContent = "Current Humidity: " + data.main.humidity + '%';                            
   
 }
 
+// takes weather forecast data as input and dynamically creates HTML elements to display the forecast for the next five days.
 function displayFive(info) {
   const container = document.getElementById('container');
 
+  container.innerHTML = '';
+
   for (let i = 1; i < info.list.length; i += 8) {
+
     const element = document.createElement('div');
+    element.classList.add('m-2');
+    element.classList.add('border');
 
     const date = document.createElement('p');
     date.textContent = info.list[i].dt_txt;
@@ -78,13 +89,12 @@ function displayFive(info) {
     const humidity = document.createElement('p');
     humidity.textContent = 'Humidity: ' + info.list[i].main.humidity;
     element.appendChild(humidity);
-    '\n'
     
     container.appendChild(element);
   }
 }
 
-
+// when the user's location is successfully retrieved. It calls the forcast, currentWeather, displayLocation, and displayFive functions to update the webpage with the weather information
 function passLocations(position) {
   var lat = position.coords.latitude;
   var long = position.coords.longitude; 
@@ -94,6 +104,7 @@ function passLocations(position) {
   displayFive(lat, long);
 } 
 
+// fetch request to the OpenWeatherMap API to retrieve the current weather for a given latitude and longitude
 var currentWeather = function (lat, long) {
     var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=imperial`;
   
@@ -114,6 +125,7 @@ var currentWeather = function (lat, long) {
 
   };
 
+// that takes a city name as input and makes a fetch request to the OpenWeatherMap API to retrieve the latitude and longitude coordinates for that city
 var getLocation = function(city) {
   var geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${apiKey}`
   fetch(geoUrl)
@@ -129,8 +141,6 @@ var getLocation = function(city) {
 cityButtonEl.addEventListener('click', function(event) {
   event.preventDefault();
   var name = cityNameEl.value;
-  //hiddenEl.classList.toggle('hidden');
+  hiddenEl.classList.remove('hidden');
   getLocation(name);
-  
-
 })
