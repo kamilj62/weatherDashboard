@@ -158,7 +158,7 @@ cityButtonEl.addEventListener('click', function(event) {
     cityButton.classList.add('btn', 'bg-secondary-subtle', 'text-dark', 'mb-3', 'w-100');
     cityButtonContainer.appendChild(cityButton);
 
-    // Add event listener to the new city button
+    // Add event listener to already made button 
     cityButton.addEventListener('click', function(event) {
       event.preventDefault();
       var clickedCity = this.textContent;
