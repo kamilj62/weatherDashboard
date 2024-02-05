@@ -13,7 +13,7 @@ var hiddenEl = document.querySelector('.hidden');
 var searchedHistory = [];
 
 // get position
-var getLocation = function() {
+var getPosition = function() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(passLocations);
     } else {
@@ -151,25 +151,33 @@ var getLocation = function(city) {
 cityButtonEl.addEventListener('click', function(event) {
   event.preventDefault();
   var name = cityNameEl.value;
-  hiddenEl.classList.remove('hidden');
-  getLocation(name);
-  cityNameEl.value = ''; // Clear the input field after submitting
 
-  // Add the city name to the searchedHistory array in localStorage
-  searchedHistory.push(name);
-  localStorage.setItem('searchHistory', JSON.stringify(searchedHistory));
+  if (name === "") {
+    alert('Please enter a city');
+  }
+  else {
+    hiddenEl.classList.remove('hidden');
+    getLocation(name);
+    cityNameEl.value = ""; // Clear the input field after submitting
 
-  // Create a new city button and add it to the city buttons container
-  var cityButtonContainer = document.getElementById('cityButtonContainer');
-  var cityButton = document.createElement('button');
-  cityButton.textContent = name;
-  cityButton.classList.add('btn', 'bg-secondary-subtle', 'text-dark', 'mb-3', 'w-100');
-  cityButtonContainer.appendChild(cityButton);
+    // Add the city name to the searchedHistory array in localStorage
+    searchedHistory.push(name);
+    localStorage.setItem('searchHistory', JSON.stringify(searchedHistory));
 
-  // Add event listener to the new city button
-  cityButton.addEventListener('click', function(event) {
-    event.preventDefault();
-    var clickedCity = this.textContent;
-    getLocation(clickedCity);
+    // Create a new city button and add it to the city buttons container
+    var cityButtonContainer = document.getElementById('cityButtonContainer');
+    var cityButton = document.createElement('button');
+    cityButton.textContent = name;
+    cityButton.classList.add('btn', 'bg-secondary-subtle', 'text-dark', 'mb-3', 'w-100');
+    cityButtonContainer.appendChild(cityButton);
+
+    // Add event listener to the new city button
+    cityButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      var clickedCity = this.textContent;
+
+      getLocation(clickedCity);
+    
   });
+}
 });
