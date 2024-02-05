@@ -12,6 +12,7 @@ var hiddenEl = document.querySelector('.hidden');
 
 var searchedHistory = [];
 
+// get position
 var getLocation = function() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(passLocations);
@@ -37,18 +38,22 @@ var forcast = function (lat, long) {
       .catch(function (error) {
         alert('Unable to connect to forecast');
       });
-  };
+};
 
+// show location of city typed in the search
 function displayLocation(data) {
 
   currentDateEl.textContent = "Today's Date: " + new Date().toLocaleDateString();
   locationEl.textContent = "Current location: " + data.name
   
-  if (currentIconEl.children.length === 0) {
-    var weatherIcon = document.createElement('img');
-    weatherIcon.src = 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
-    currentIconEl.appendChild(weatherIcon);
+  // Added only one weather icon
+  var weatherIcon = document.createElement('img');
+  weatherIcon.src = 'https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png';
+  while (currentIconEl.firstChild) {
+    currentIconEl.firstChild.remove();
   }
+  currentIconEl.appendChild(weatherIcon);
+  
 
   currentTempEl.textContent = "Current Temperature: " + data.main.temp + '°F';
   currentWeatherEl.textContent = "Current Weather: " + data.weather[0].main;
@@ -62,6 +67,7 @@ function displayLocation(data) {
   }
 }
 
+// show the five day forecast
 function displayFive(info) {
   const container = document.getElementById('container');
 
@@ -101,6 +107,7 @@ function displayFive(info) {
   }
 }
 
+// acquire latitude and longitude coordinates 
 function passLocations(position) {
   var lat = position.coords.latitude;
   var long = position.coords.longitude; 
@@ -108,6 +115,7 @@ function passLocations(position) {
   currentWeather(lat, long);
 } 
 
+// obtain weather at location now
 var currentWeather = function (lat, long) {
     var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=imperial`;
   
@@ -125,8 +133,9 @@ var currentWeather = function (lat, long) {
       .catch(function (error) {
         alert('Unable to connect to city');
       });
-  };
+};
 
+// obtain coordinates of city
 var getLocation = function(city) {
   var geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${apiKey}`
   fetch(geoUrl)
@@ -138,6 +147,7 @@ var getLocation = function(city) {
     })
 }
 
+// click button to search for city 
 cityButtonEl.addEventListener('click', function(event) {
   event.preventDefault();
   var name = cityNameEl.value;
