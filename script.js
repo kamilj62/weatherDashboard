@@ -1,3 +1,4 @@
+// Elements stored from HTML
 var cityButtonEl = document.getElementById("cityButton");
 var cityNameEl = document.getElementById("cityName");
 var apiKey = '5c7bbb9b2135cd2940045fc0c9f3f01f';
@@ -11,15 +12,6 @@ var currentHumidityEl = document.getElementById('currentHumidity');
 var hiddenEl = document.querySelector('.hidden');
 
 var searchedHistory = [];
-
-// get position
-var getPosition = function() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(passLocations);
-    } else {
-      alert('Not able to find your location')
-    }
-  }
 
 var forcast = function (lat, long) {
   var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + long + '&appid=' + apiKey + '&units=imperial';
@@ -60,11 +52,6 @@ function displayLocation(data) {
   currentWindEl.textContent = "Current Wind: " + data.wind.speed + ' m/s';
   currentHumidityEl.textContent = "Current Humidity: " + data.main.humidity + '%';      
   
-  if (!searchedHistory.includes(data.name)) {
-    searchedHistory.push(data.name);
-    localStorage.setItem('searchHistory', JSON.stringify(searchedHistory));
-    console.log('searchHistory', searchedHistory);
-  }
 }
 
 // show the five day forecast
